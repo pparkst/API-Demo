@@ -1,5 +1,7 @@
 package com.pparkst.api.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,28 +20,34 @@ public class BoardService {
     
     private final BoardRepository boardRepository;
     private final BoardMapper boardMapper;
+    private final static Logger logger = LoggerFactory.getLogger(BoardService.class);
 
     public BoardResponseDto saveNewBoard(BoardCreateRequestDto boardCreateRequestDto) {
-        System.out.println("saveNewBoard");
+        logger.info("Saving new board");
         final Board board = this.boardMapper.toEntity(boardCreateRequestDto);
         board.softCreate();
-        System.out.println("board: " + board.getId() + " " + board.getTitle() + " " + board.getContent() + " " + board.getMember_No() + " " + board.getCreatedAt() + " " + board.getUpdatedAt() + " " + board.getIsDeleted() + " " + board.getDeletedAt());
+        logger.debug("Board saved: " + board.getId() + " " + board.getTitle() + " " + board.getContent() + " " + board.getMember_No() + " " + board.getCreatedAt() + " " + board.getUpdatedAt() + " " + board.getIsDeleted() + " " + board.getDeletedAt());
         return boardMapper.toResponseDto(boardRepository.save(board));
     }
  
     @Transactional
     public BoardResponseDto editBoard(Long id, BoardUpdateRequestDto boardUpdateRequestDto) {
+        logger.info("Editing board");
+        logger.debug("Editing board by id: " + id);
+        logger.debug("Received content: " + boardUpdateRequestDto.getTitle() + " " + boardUpdateRequestDto.getContent());
         final Board originBoard = boardRepository.findByIdAndIsDeletedFalse(id).orElseThrow(() -> new RuntimeException("해당하는 보드가 없습니다."));
         originBoard.softUpdate(boardUpdateRequestDto.getTitle(), boardUpdateRequestDto.getContent());
         return boardMapper.toResponseDto(originBoard);
     }
 
     public BoardResponseDto findBoardById(Long id) {
+        logger.info("Finding board by id: " + id);
         return boardMapper.toResponseDto(boardRepository.findByIdAndIsDeletedFalse(id)
         .orElseThrow(() -> new RuntimeException("해당하는 보드가 없습니다.")));
     }
 
     public void deleteBoardById(Long id) {
+        logger.info("Deleting board by id: " + id);
         final Board board = boardRepository.findById(id).orElseThrow(() -> new RuntimeException("해당하는 보드가 없습니다"));
         board.softDelete();
         boardRepository.save(board);
