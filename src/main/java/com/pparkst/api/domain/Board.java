@@ -8,6 +8,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import lombok.AccessLevel;
 
 @Entity
@@ -15,6 +16,7 @@ import lombok.AccessLevel;
 @AllArgsConstructor(access = AccessLevel.PUBLIC)
 @NoArgsConstructor(access = AccessLevel.PROTECTED) // Public으로 설정이 필요한경우 MapStructor 다시 확인 필요, 정상적으로 생성자에 접근하지못함
 @Table(name = "tbl_board")
+@ToString
 public class Board {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

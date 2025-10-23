@@ -8,6 +8,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import lombok.AccessLevel;
 
 @Entity
@@ -15,6 +16,7 @@ import lombok.AccessLevel;
 @AllArgsConstructor(access = AccessLevel.PUBLIC)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "tbl_member")
+@ToString
 public class Member {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -48,6 +50,14 @@ public class Member {
 
     public void softUpdate(String password, String name) {
         this.password = password;
+        this.name = name;
+    }
+
+    public void softUpdate(String password) {
+        this.password = password;
+    }
+
+    public void softUpdateName(String name) {
         this.name = name;
     }
 

@@ -11,25 +11,20 @@ import com.pparkst.api.web.dto.MemberUpdateRequestDto;
 @Mapper(componentModel = "spring")
 public interface MemberMapper {
 
-    @Mapping(target = "no", ignore = false)
-    @Mapping(target = "createdAt", ignore = false)
-    @Mapping(target = "updateAt", ignore = false)
-    @Mapping(target = "withdrawalAt", ignore = false)
+    @Mapping(target = "no", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "withdrawalAt", ignore = true)
     @Mapping(target = "isWithdrawal", constant = "false")
     Member toEntity(MemberCreateRequestDto dto);
 
-    @Mapping(target = "account", ignore = false)
-    @Mapping(target = "createdAt", ignore = false)
-    @Mapping(target = "updateAt", ignore = false)
-    @Mapping(target = "isWithdrawal", ignore = false)
-    @Mapping(target = "withdrawalAt", ignore = false)
+    @Mapping(target = "account", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "isWithdrawal", ignore = true)
+    @Mapping(target = "withdrawalAt", ignore = true)
     Member toEntity(MemberUpdateRequestDto dto);
 
-    @Mapping(target = "password")
-    @Mapping(target = "createdAt", ignore = false)
-    @Mapping(target = "updateAt", ignore = false)
-    @Mapping(target = "isWithdrawal", ignore = false)
-    @Mapping(target = "withdrawalAt", ignore = false)
     MemberResponseDto toResponseDto(Member member);
 
 }

@@ -4,6 +4,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.pparkst.api.service.BoardService;
+import com.pparkst.api.service.DummyService;
 import com.pparkst.api.web.dto.BoardCreateRequestDto;
 import com.pparkst.api.web.dto.BoardResponseDto;
 import com.pparkst.api.web.dto.BoardUpdateRequestDto;
@@ -20,6 +21,8 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 
 @RestController
@@ -28,6 +31,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 public class BoardController {
     
     private final BoardService boardService; 
+    private final DummyService dummyService;
     private final Logger logger = LoggerFactory.getLogger(BoardController.class);
 
     @PostMapping()
@@ -62,6 +66,13 @@ public class BoardController {
         boardService.deleteBoardById(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/dummy/{count}")
+    public ResponseEntity<Void> createDummyData(@PathVariable Long count) {
+        dummyService.createBoardDummyData(count);
+        return ResponseEntity.noContent().build();
+    }
+    
     
     
 }

@@ -35,9 +35,9 @@ public class BoardService {
         logger.info("Editing board");
         logger.debug("Editing board by id: " + id);
         logger.debug("Received content: " + boardUpdateRequestDto.getTitle() + " " + boardUpdateRequestDto.getContent());
-        final Board originBoard = boardRepository.findByIdAndIsDeletedFalse(id).orElseThrow(() -> new RuntimeException("해당하는 보드가 없습니다."));
-        originBoard.softUpdate(boardUpdateRequestDto.getTitle(), boardUpdateRequestDto.getContent());
-        return boardMapper.toResponseDto(originBoard);
+        final Board boardOrigin = boardRepository.findByIdAndIsDeletedFalse(id).orElseThrow(() -> new RuntimeException("해당하는 보드가 없습니다."));
+        boardOrigin.softUpdate(boardUpdateRequestDto.getTitle(), boardUpdateRequestDto.getContent());
+        return boardMapper.toResponseDto(boardOrigin);
     }
 
     public BoardResponseDto findBoardById(Long id) {
@@ -46,10 +46,10 @@ public class BoardService {
         .orElseThrow(() -> new RuntimeException("해당하는 보드가 없습니다.")));
     }
 
+    @Transactional
     public void deleteBoardById(Long id) {
         logger.info("Deleting board by id: " + id);
         final Board board = boardRepository.findById(id).orElseThrow(() -> new RuntimeException("해당하는 보드가 없습니다"));
         board.softDelete();
-        boardRepository.save(board);
     }
 }
