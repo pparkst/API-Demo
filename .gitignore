@@ -6,6 +6,8 @@ build/
 !**/src/test/**/build/
 logs/
 
+demoApi-deployment.yaml
+
 ### STS ###
 .apt_generated
 .classpath
