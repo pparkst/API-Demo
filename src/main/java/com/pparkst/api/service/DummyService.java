@@ -81,8 +81,6 @@ public class DummyService {
                 null
             );
 
-            System.out.println(member);
-
             memberList.add(member);
 
             if(i%50 == 0) {
