@@ -1,5 +1,7 @@
 package com.pparkst.api.service;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -8,19 +10,23 @@ import org.springframework.transaction.annotation.Transactional;
 import com.pparkst.api.domain.Board;
 import com.pparkst.api.mapper.BoardMapper;
 import com.pparkst.api.repository.BoardRepository;
+import com.pparkst.api.util.CreateDummyData;
 import com.pparkst.api.web.dto.BoardCreateRequestDto;
 import com.pparkst.api.web.dto.BoardResponseDto;
 import com.pparkst.api.web.dto.BoardUpdateRequestDto;
+import com.pparkst.api.web.dto.ResponseMessageDto;
 
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 public class BoardService {
-    
     private final BoardRepository boardRepository;
     private final BoardMapper boardMapper;
     private final static Logger logger = LoggerFactory.getLogger(BoardService.class);
+    private final EntityManager entityManager;
+    private final BatchProcessingService batchProcessingService;
 
     public BoardResponseDto saveNewBoard(BoardCreateRequestDto boardCreateRequestDto) {
         logger.info("Saving new board");
@@ -51,5 +57,22 @@ public class BoardService {
         logger.info("Deleting board by id: " + id);
         final Board board = boardRepository.findById(id).orElseThrow(() -> new RuntimeException("해당하는 보드가 없습니다"));
         board.softDelete();
+    }
+
+    public ResponseMessageDto insertDummyDataBatchProcessing(Long rowCount) {
+        ResponseMessageDto responseMessageDto = new ResponseMessageDto();
+
+        CreateDummyData createDummyData = new CreateDummyData();
+        List<Board> dummyBoardList = createDummyData.createBoard(rowCount);
+
+        try {
+            batchProcessingService.processBulkData(dummyBoardList, boardRepository);
+        } catch (Exception e) {
+            responseMessageDto.setMessage(e.getMessage());
+            logger.error("Error during batch processing", e);
+            throw new RuntimeException("Batch processing failed", e);
+        }
+
+        return responseMessageDto;
     }
 }

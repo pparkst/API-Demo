@@ -8,6 +8,7 @@ import com.pparkst.api.service.DummyService;
 import com.pparkst.api.web.dto.BoardCreateRequestDto;
 import com.pparkst.api.web.dto.BoardResponseDto;
 import com.pparkst.api.web.dto.BoardUpdateRequestDto;
+import com.pparkst.api.web.dto.ResponseMessageDto;
 
 import lombok.RequiredArgsConstructor;
 
@@ -67,11 +68,14 @@ public class BoardController {
     }
 
     @GetMapping("/dummy/{count}")
-    public ResponseEntity<Void> createDummyData(@PathVariable Long count) {
+    public ResponseEntity<Void> testInsertDummyData(@PathVariable Long count) {
         dummyService.createBoardDummyData(count);
         return ResponseEntity.noContent().build();
     }
     
-    
+    @GetMapping("/dummyBatch/{rowCount}")
+    public ResponseEntity<ResponseMessageDto> testInsertBatchDummyData(@PathVariable Long rowCount) {
+        return ResponseEntity.ok(boardService.insertDummyDataBatchProcessing(rowCount));
+    }
     
 }

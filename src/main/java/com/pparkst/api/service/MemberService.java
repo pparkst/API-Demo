@@ -1,5 +1,7 @@
 package com.pparkst.api.service;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -7,9 +9,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.pparkst.api.mapper.MemberMapper;
 import com.pparkst.api.repository.MemberRepository;
+import com.pparkst.api.util.CreateDummyData;
 import com.pparkst.api.web.dto.MemberCreateRequestDto;
 import com.pparkst.api.web.dto.MemberResponseDto;
 import com.pparkst.api.web.dto.MemberUpdateRequestDto;
+import com.pparkst.api.web.dto.ResponseMessageDto;
+
+import jakarta.persistence.EntityManager;
+
 import com.pparkst.api.domain.Member;
 
 import lombok.RequiredArgsConstructor;
@@ -21,6 +28,8 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final MemberMapper memberMapper;
     private final static Logger logger = LoggerFactory.getLogger(MemberService.class);
+    private final EntityManager entityManager;
+    private final BatchProcessingService batchProcessingService;
 
     public MemberResponseDto getMemberByNo(Long no) {
         logger.info("getMemberByNo");
@@ -70,6 +79,23 @@ public class MemberService {
 
         Member memberOrigin = memberRepository.findById(no).orElseThrow(() -> new RuntimeException("해당하는 고객이 없습니다."));
         memberOrigin.softDelete();
+    }
+
+    public ResponseMessageDto insertDummyDataBatchProcessing(Long rowCount) {
+        ResponseMessageDto responseMessageDto = new ResponseMessageDto();
+
+        CreateDummyData createDummyData = new CreateDummyData();
+        List<Member> memberDummyList = createDummyData.createMember(rowCount);
+
+        try {
+            batchProcessingService.processBulkData(memberDummyList, memberRepository);
+        } catch (Exception e) {
+            responseMessageDto.setMessage(e.getMessage());
+            logger.error("Error during batch processing", e);
+            throw new RuntimeException("Batch processing failed", e);
+        }
+
+        return responseMessageDto;
     }
 
     

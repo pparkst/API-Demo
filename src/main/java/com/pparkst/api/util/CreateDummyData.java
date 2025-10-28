@@ -1,35 +1,18 @@
-package com.pparkst.api.service;
+package com.pparkst.api.util;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import net.datafaker.Faker;
 import com.pparkst.api.domain.Board;
 import com.pparkst.api.domain.Member;
-import com.pparkst.api.repository.BoardRepository;
-import com.pparkst.api.repository.MemberRepository;
 import java.time.ZoneId;
 
-import jakarta.persistence.EntityManager;
-import lombok.RequiredArgsConstructor;
+public class CreateDummyData {
 
-
-@Service
-@RequiredArgsConstructor
-public class DummyService {
-
-    private final BoardRepository boardRepository;
-    private final MemberRepository memberRepository;
-    private final EntityManager entityManager;
-
-    @Transactional
-    public void createBoardDummyData(Long rowCount) {
+    public List<Board> createBoard(Long rowCount) {
         Faker faker = new Faker(new Locale("ko", "KR"));
         Random random = new Random();
 
@@ -48,20 +31,11 @@ public class DummyService {
             );
 
             boardList.add(board);
-
-            if(i%5000 == 0) {
-                boardRepository.saveAll(boardList);
-                boardList = new ArrayList<Board>();
-                entityManager.flush();
-                entityManager.clear();
-            }
         }
-
-        boardRepository.saveAll(boardList);
+        return boardList;
     }
 
-    @Transactional
-    public void createMemberDummyData(Long rowCount) {
+    public List<Member> createMember(Long rowCount) {
         Faker faker = new Faker(new Locale("ko", "KR"));
         Faker enFaker = new Faker(new Locale("en", "US"));
         List<Member> memberList = new ArrayList<Member>();
@@ -80,15 +54,8 @@ public class DummyService {
             );
 
             memberList.add(member);
-
-            if(i%5000 == 0) {
-                memberRepository.saveAll(memberList);
-                memberList = new ArrayList<Member>();
-                entityManager.flush();
-                entityManager.clear();
-            }
         }
 
-        memberRepository.saveAll(memberList);
+        return memberList;
     }
 }

@@ -3,12 +3,13 @@ package com.pparkst.api.web.controller;
 import org.slf4j.Logger;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
+import com.pparkst.api.service.BoardService;
 import com.pparkst.api.service.DummyService;
 import com.pparkst.api.service.MemberService;
 import com.pparkst.api.web.dto.MemberCreateRequestDto;
 import com.pparkst.api.web.dto.MemberResponseDto;
 import com.pparkst.api.web.dto.MemberUpdateRequestDto;
+import com.pparkst.api.web.dto.ResponseMessageDto;
 
 import lombok.RequiredArgsConstructor;
 
@@ -16,19 +17,17 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 
-
-
 @RestController
 @RequestMapping("/api/members")
 @RequiredArgsConstructor
 public class MemberController {
+
     private final MemberService memberService;
     private final DummyService dummyService;
 
@@ -56,9 +55,15 @@ public class MemberController {
     }
 
     @GetMapping("/dummy/{rowCount}")
-    public ResponseEntity<Void> getMethodName(@PathVariable Long rowCount) {
+    public ResponseEntity<Void> testInsertDummyData(@PathVariable Long rowCount) {
         dummyService.createMemberDummyData(rowCount);
         return ResponseEntity.noContent().build();
+    }
+
+
+    @GetMapping("/dummyBatch/{rowCount}")
+    public ResponseEntity<ResponseMessageDto> testInsertBatchDummyData(@PathVariable Long rowCount) {
+        return ResponseEntity.ok(memberService.insertDummyDataBatchProcessing(rowCount));
     }
     
     
